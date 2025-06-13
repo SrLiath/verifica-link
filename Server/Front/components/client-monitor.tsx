@@ -1,17 +1,15 @@
 import type { Client } from "@/lib/types"
 import SpeedMeter from "./speed-meter"
-import { CheckCircle, XCircle } from "lucide-react"
+import { CheckCircle, XCircle, Trash2 } from "lucide-react"
 
 interface ClientMonitorProps {
   client: Client
 }
 
 export default function ClientMonitor({ client }: ClientMonitorProps) {
-  // Verifica se todos os links estão UP, DOWN ou em estado misto
   const allLinksUp = client.links.every((link) => link.status === "UP")
   const allLinksDown = client.links.every((link) => link.status === "DOWN")
-
-  // Determina a classe de fundo com base no status dos links
+  console.log(client)
   let bgClass = "bg-gray-800"
   if (allLinksDown) {
     bgClass = "bg-red-900/30"
@@ -19,10 +17,36 @@ export default function ClientMonitor({ client }: ClientMonitorProps) {
     bgClass = "bg-yellow-900/30"
   }
 
+  const handleDeleteClient = async () => {
+    if (!confirm(`Tem certeza que deseja excluir o cliente "${client.name}"?`)) return
+
+    try {
+      const res = await fetch(`http://193.123.117.91:3001/clients/${client.id}`, {
+        method: 'DELETE',
+      })
+
+      if (res.ok) {
+
+      } else {
+        alert('Erro ao excluir cliente.')
+      }
+    } catch (error) {
+      console.error('Erro na exclusão:', error)
+      alert('Falha ao conectar com o servidor.')
+    }
+  }
+
   return (
     <div className={`rounded-lg overflow-hidden border border-gray-700 ${bgClass}`}>
-      <div className="p-3 border-b border-gray-700 bg-gray-800">
+      <div className="p-3 border-b border-gray-700 bg-gray-800 relative">
         <h2 className="text-lg font-bold text-white text-center">{client.name}</h2>
+        <button
+          onClick={handleDeleteClient}
+          className="absolute top-1 right-1 text-gray-400 hover:text-red-500"
+          title="Excluir cliente"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
       </div>
 
       <div className="p-4">

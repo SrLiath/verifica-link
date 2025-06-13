@@ -13,7 +13,7 @@ export default function Header({ currentTime }: HeaderProps) {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
-  // Necessário para evitar erro de hidratação
+
   useEffect(() => {
     setMounted(true)
   }, [])
